@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/abdelillah-fixer/Projet-DevOps-BenjouAbdelilah.git'
+                // Spécifie explicitement la branche "main"
+                git branch: 'main', url: 'https://github.com/abdelillah-fixer/Projet-DevOps-BenjouAbdelilah.git'
             }
         }
         stage('Build') {
@@ -31,7 +32,8 @@ pipeline {
             }
             steps {
                 echo 'Deploying application...'
-                // Add deploy steps, e.g., copy jar to server
+                // Exemple simple : copie du jar (adapter selon ton environnement)
+                // sh 'cp demo/target/*.jar /path/to/deploy'
             }
         }
         stage('Notify Slack') {
