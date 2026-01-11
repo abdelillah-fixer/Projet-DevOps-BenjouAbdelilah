@@ -48,11 +48,7 @@ pipeline {
             }
         }
 
-        stage('Notify Slack') {
-            steps {
-                slackSend channel: '#devops', message: "Build ${env.BUILD_NUMBER} completed successfully"
-            }
-        }
+       
     }
 
     post {
