@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    tools {
+        // Le nom "Maven" doit correspondre à celui configuré dans Manage Jenkins → Tools → Maven
+        maven 'Maven'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -7,13 +13,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/abdelillah-fixer/Projet-DevOps-BenjouAbdelilah.git'
             }
         }
+
         stage('Build') {
             steps {
                 dir('demo') {
+                    // Utilise Maven configuré dans Tools
                     sh 'mvn clean package'
                 }
             }
         }
+
         stage('Test') {
             steps {
                 dir('demo') {
@@ -21,11 +30,13 @@ pipeline {
                 }
             }
         }
+
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: 'demo/target/*.jar', fingerprint: true
             }
         }
+
         stage('Deploy') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -36,10 +47,17 @@ pipeline {
                 // sh 'cp demo/target/*.jar /path/to/deploy'
             }
         }
+
         stage('Notify Slack') {
             steps {
                 slackSend channel: '#devops', message: "Build ${env.BUILD_NUMBER} completed successfully"
             }
+        }
+    }
+
+    post {
+        failure {
+            slackSend channel: '#devops', message: "Build ${env.BUILD_NUMBER} failed!"
         }
     }
 }
